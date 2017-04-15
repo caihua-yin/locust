@@ -1,0 +1,5 @@
+msgpack-python
+requests==2.9.1
+flask
+gevent==1.1.1
+facker
