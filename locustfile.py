@@ -16,6 +16,11 @@ class AmbryTasks(TaskSet):
         # The blob size for POST/GET
         self.blob_size = 102400 # 100KiB
 
+        # Max number of blobs in self.blobs, self.blobs will be reset to empty once this reached
+        # This can avoid performance degrade
+        # The reset operation will be done by delete() operation
+        self.MAX_BLOBS = 10000
+
     @task(1)
     def health(self):
         self.client.get("/healthCheck")
@@ -91,9 +96,13 @@ class AmbryTasks(TaskSet):
         # Remove extra headers set by post
         self._remove_header()
 
-        # Skip GET blob if there is no blob created
-        if len(self.blobs) == 0:
+        number_of_blobs = len(self.blobs)
+        if number_of_blobs == 0:
+            # Skip GET blob if there is no blob created
             return
+        elif number_of_blobs >= self.MAX_BLOBS:
+            # Reset blobs dict to avoid performance degrade here
+            self.blobs = {}
         
         blob_id = random.choice(self.blobs.keys())
         self.blobs.pop(blob_id)

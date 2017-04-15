@@ -9,6 +9,9 @@ Doc: http://docs.locust.io/en/latest/
 ## Install
 ```
 $ sudo pip install locustio
+
+# Install dependency
+$ pip install -r requirements.txt
 ```
 
 ## Usage
